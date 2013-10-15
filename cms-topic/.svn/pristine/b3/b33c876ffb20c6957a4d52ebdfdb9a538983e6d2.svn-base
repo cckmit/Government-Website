@@ -1,0 +1,67 @@
+package org.konghao.cms.service;
+
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.konghao.basic.model.Pager;
+import org.konghao.cms.dao.IIndexPicDao;
+import org.konghao.cms.model.IndexPic;
+import org.springframework.stereotype.Service;
+
+@Service("indexPicService")
+public class IndexPicService implements IIndexPicService {
+	private IIndexPicDao indexPicDao;
+	
+	
+	
+	public IIndexPicDao getIndexPicDao() {
+		return indexPicDao;
+	}
+
+	@Inject
+	public void setIndexPicDao(IIndexPicDao indexPicDao) {
+		this.indexPicDao = indexPicDao;
+	}
+
+	@Override
+	public void add(IndexPic indexPic) {
+		indexPic.setCreateDate(new Date());
+		indexPicDao.add(indexPic);
+	}
+
+	@Override
+	public void update(IndexPic indexPic) {
+		indexPicDao.update(indexPic);
+	}
+
+	@Override
+	public void delete(int id) {
+		indexPicDao.delete(id);
+	}
+
+	@Override
+	public void updateStatus(int id) {
+		IndexPic ip = indexPicDao.load(id);
+		if(ip.getStatus()==0) ip.setStatus(1);
+		else ip.setStatus(0);
+		indexPicDao.update(ip);
+	}
+
+	@Override
+	public IndexPic load(int id) {
+		return indexPicDao.load(id);
+	}
+
+	@Override
+	public List<IndexPic> listIndexPicByNum(int num) {
+		return indexPicDao.listIndexPicByNum(num);
+	}
+
+	@Override
+	public Pager<IndexPic> findIndexPic() {
+		return indexPicDao.findIndexPic();
+	}
+
+}

@@ -1,0 +1,31 @@
+package org.konghao.cms.dao;
+
+import java.util.List;
+
+import org.konghao.basic.dao.BaseDao;
+import org.konghao.basic.model.Pager;
+import org.konghao.cms.model.Keyword;
+
+public class KeywordDao extends BaseDao<Keyword> implements IKeywordDao {
+
+	@Override
+	public List<Keyword> listChiefKeyword(int num) {
+		return null;
+	}
+
+	@Override
+	public Pager<Keyword> findNoUseKeyword() {
+		return null;
+	}
+
+	@Override
+	public void clearNoUserKeyword() {
+
+	}
+
+	@Override
+	public Pager<Keyword> findUserKeyword() {
+		return null;
+	}
+
+}

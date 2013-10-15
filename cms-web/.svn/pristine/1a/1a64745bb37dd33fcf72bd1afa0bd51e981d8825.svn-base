@@ -1,0 +1,78 @@
+var t;
+var setting = {
+		view: {
+			dblClickExpand: true,
+			showLine: true,
+			selectedMulti: false,
+			nameIsHTML:true,
+			expandSpeed: ($.browser.msie && parseInt($.browser.version)<=6)?"":"fast"
+		},
+		check:{
+			enable:true
+		},
+		data: {
+			simpleData: {
+				enable:true,
+				idKey: "id",
+				pIdKey: "pid",
+				rootPId: "-1"
+			}
+		},
+		callback: {
+			onCheck:checkChannel,
+			beforeCheck:bcc
+		}
+	};
+	
+var oldCheckNodes;
+
+function bcc(treeId,treeNode) {
+	
+	oldCheckNodes = t.getChangeCheckedNodes();
+}
+
+function checkChannel(even,treeId,treeNode) {
+	var checked = treeNode.checked;
+	var newCheckNodes = t.getChangeCheckedNodes();
+	if(checked) {
+		//执行添加
+		var nodes = getCheckNodes(oldCheckNodes,newCheckNodes);
+		var groupId = $("#groupId").val();
+		for(var i=0;i<nodes.length;i++) {
+			var n = nodes[i];
+			var cid = n.id;
+			if(cid!=0) {
+				channelService.addGroupChannel(groupId,cid);
+			}
+		} 
+	} else {
+		//执行删除
+		var nodes = getCheckNodes(newCheckNodes,oldCheckNodes);
+		var groupId = $("#groupId").val();
+		for(var i=0;i<nodes.length;i++) {
+			var n = nodes[i];
+			var cid = n.id;
+			if(cid!=0) {
+				channelService.deleteGroupChannel(groupId,cid);
+			}
+		} 
+	}
+	
+}
+
+function getCheckNodes(oldNodes,newNodes) {
+	var nodes = [];
+	for(var i=0;i<newNodes.length;i++) {
+		if(!checkInNodes(newNodes[i],oldNodes)) {
+			nodes.push(newNodes[i]);
+		}
+	}
+	return nodes;
+}
+
+function checkInNodes(node,nodes) {
+	for(var i=0;i<nodes.length;i++) {
+		if(nodes[i].id==node.id) return true;
+	}
+	return false;
+}

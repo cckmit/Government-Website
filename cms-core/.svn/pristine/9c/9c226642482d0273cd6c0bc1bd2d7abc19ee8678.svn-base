@@ -1,0 +1,5 @@
+jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.url = jdbc:mysql://localhost:3306/fz_cms
+jdbc.username = fz
+jdbc.password = fz123
+jdbc.database=fz_cms

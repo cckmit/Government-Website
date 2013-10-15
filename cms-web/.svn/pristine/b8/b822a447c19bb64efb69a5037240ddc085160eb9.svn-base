@@ -1,0 +1,73 @@
+package org.konghao.cms.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.jboss.logging.Param;
+import org.konghao.cms.dto.TreeDto;
+import org.konghao.cms.model.Channel;
+import org.konghao.cms.model.ChannelTree;
+import org.konghao.cms.service.IChannelService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@RequestMapping("/admin/channel")
+@Controller
+public class ChannelController {
+	private IChannelService channelService;
+
+	public IChannelService getChannelService() {
+		return channelService;
+	}
+	@Inject
+	public void setChannelService(IChannelService channelService) {
+		this.channelService = channelService;
+	}
+
+
+
+	@RequestMapping("/channels")
+	public String list(Model model) {
+//		model.addAttribute("treeDatas", JsonUtil.getInstance().obj2json(channelService.generateTree()));
+		return "channel/list";
+	}
+	
+	@RequestMapping("/channels/{pid}")
+	public String listChild(@PathVariable Integer pid,Model model) {
+		Channel pc = null;
+		if(pid==null||pid<=0) {
+			pc = new Channel();
+			pc.setName(Channel.ROOT_NAME);
+			pc.setId(Channel.ROOT_ID);
+		} else
+			pc = channelService.load(pid);
+		model.addAttribute("pc", pc);
+		model.addAttribute("channels",channelService.listByParent(pid));
+		return "channel/list_child";
+	}
+	
+	@RequestMapping("/treeAll")
+	public @ResponseBody List<ChannelTree> tree() {
+		return channelService.generateTree();
+	}
+	
+	@RequestMapping(value="/treeAs",method=RequestMethod.POST)
+	public @ResponseBody List<TreeDto> tree(@Param Integer pid) {
+		List<TreeDto> tds = new ArrayList<TreeDto>();
+		if(pid==null||pid<=0) {
+			tds.add(new TreeDto(0,"网站根栏目",1));
+			return tds;
+		}
+		List<ChannelTree> cts = channelService.generateTreeByParent(pid);
+		for(ChannelTree ct:cts) {
+			tds.add(new TreeDto(ct.getId(),ct.getName(),1));
+		}
+		return tds;
+	}
+}

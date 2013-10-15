@@ -1,0 +1,24 @@
+package org.konghao.cms.controller;
+
+import org.konghao.cms.auth.AuthClass;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+@AuthClass
+@Controller
+@RequestMapping("/admin")
+public class BackupController {
+
+	
+	@RequestMapping(value="/backup",method=RequestMethod.GET)
+	public String backup() {
+		return "backup/add";
+	}
+	
+	@RequestMapping(value="/backups")
+	public String list(Model model) {
+		return "backup/list";
+	}
+}

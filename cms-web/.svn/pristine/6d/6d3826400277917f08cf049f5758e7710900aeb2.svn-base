@@ -1,0 +1,38 @@
+var setting = {
+		async: {
+			enable: true,
+			url:"tree"
+		},
+		view: {
+			dblClickExpand: true,
+			showLine: true,
+			selectedMulti: false,
+			nameIsHTML:true,
+			expandSpeed: ($.browser.msie && parseInt($.browser.version)<=6)?"":"fast"
+		},
+		data: {
+			simpleData: {
+				enable:true,
+				idKey: "id",
+				pIdKey: "pid",
+				rootPId: "-1"
+			}
+		},
+		callback:{
+			onClick:tclick
+		}
+	};
+function reloadTree() {
+	var to = $.fn.zTree.getZTreeObj("tree");
+	to.reAsyncChildNodes(null, "refresh");
+}
+	
+function tclick(event,treeId,treeNode) {
+	var pid = treeNode.id;
+	$("#cc").attr("src","channels/"+pid+"/-1");
+}
+
+$(function(){
+	var t = $("#tree");
+	t = $.fn.zTree.init(t, setting);
+});

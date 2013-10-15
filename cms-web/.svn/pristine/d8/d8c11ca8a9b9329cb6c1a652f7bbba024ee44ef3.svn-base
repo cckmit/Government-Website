@@ -1,0 +1,31 @@
+package org.konghao.cms.controller;
+
+import javax.inject.Inject;
+
+import org.konghao.basic.util.JsonUtil;
+import org.konghao.cms.service.IChannelService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@RequestMapping("/admin/channel")
+@Controller
+public class ChannelController {
+	private IChannelService channelService;
+
+	public IChannelService getChannelService() {
+		return channelService;
+	}
+	@Inject
+	public void setChannelService(IChannelService channelService) {
+		this.channelService = channelService;
+	}
+
+
+
+	@RequestMapping("/channels")
+	public String list(Model model) {
+		model.addAttribute("treeDatas", JsonUtil.getInstance().obj2json(channelService.generateTree()));
+		return "channel/list";
+	}
+}

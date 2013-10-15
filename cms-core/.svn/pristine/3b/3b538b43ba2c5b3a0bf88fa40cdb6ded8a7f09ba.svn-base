@@ -1,0 +1,53 @@
+package org.konghao.cms.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import org.konghao.basic.dao.BaseDao;
+import org.konghao.basic.model.Pager;
+import org.konghao.cms.model.CmsLink;
+
+public class CmsLinkDao extends BaseDao<CmsLink> implements ICmsLinkDao {
+
+
+	/**
+	 * 需要更新排序的位置
+	 */
+	@Override
+	public void delete(int id) {
+
+	}
+
+	@Override
+	public CmsLink load(int arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Pager<CmsLink> findByType(String type) {
+		return null;
+	}
+
+	@Override
+	public List<CmsLink> listByType(String type) {
+		return null;
+	}
+
+	@Override
+	public List<String> listAllType() {
+		return null;
+	}
+
+	@Override
+	public Map<String, Integer> getMinAndMaxPos() {
+		return null;
+	}
+
+	@Override
+	public void updatePos(int id, int oldPos, int newPos) {
+
+	}
+
+}

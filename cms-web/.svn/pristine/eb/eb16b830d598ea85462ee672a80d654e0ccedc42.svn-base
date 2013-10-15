@@ -1,0 +1,53 @@
+$.cms_inc = {
+	showDate:function(ele) {
+		var d = new Date();
+		var str = "现在是"+d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日";
+		$(ele).html(str+$(ele).html());
+	},
+	trChangeColor:function(){
+		$("tr:even").addClass("trEvenColor");
+		$("tr").mouseover(function(){
+			$(this).addClass("trMouseover");
+		});
+		$("tr").mouseout(function(){
+			$(this).removeClass("trMouseover");
+		});
+	},
+	deleteConfirm:function(ele,msg) {
+		if(!msg) msg = "删除操作不可逆,确定删除吗?";
+		$(ele).click(function(){
+			var c = confirm(msg);
+			if(c) {
+				window.location.href = "delete/"+$(this).attr("title");
+			} else 
+				return false;
+		});
+	},
+	choiceOther:function(types,ele) {
+		if(!types) types="#allType";
+		if(!ele) ele="#type";
+		$(types).change(function(){
+			var val = $(this).val();
+			if(val=="-1") {
+				$(ele).removeAttr("readonly");
+				$(ele).val("");
+			} else {
+				$(ele).attr("readonly","true");
+				$(ele).val(val);
+			}
+		});
+	}
+};
+
+function openWin(f,n,w,h,s){
+	sb = s == "1" ? "1" : "0";
+	l = (screen.width - w)/2;
+	t = (screen.height - h)/2;
+	if(!w) {
+		sFeatures = "fullscreen=yes,center=1,scrollbars=1,status=0,directories=0,channelmode=0";
+	} else {
+		sFeatures = "left="+ l +",top="+ t +",height="+ h +",width="+ w
+		+ ",center=1,scrollbars=" + sb + ",status=0,directories=0,channelmode=0";
+	}
+	openwin = window.open(f , n , sFeatures );
+}

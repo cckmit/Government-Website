@@ -1,0 +1,53 @@
+package org.konghao.basic.dao;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import javax.inject.Inject;
+
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.operation.DatabaseOperation;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.konghao.basic.model.User;
+import org.konghao.basic.test.util.AbstractDbUnitTestCase;
+import org.konghao.basic.test.util.EntitiesHelper;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("/beans.xml")
+@TestExecutionListeners({DbUnitTestExecutionListener.class, 
+		DependencyInjectionTestExecutionListener.class})
+public class TestUserDao extends AbstractDbUnitTestCase{
+	@Inject
+	private IUserDao userDao;
+	
+	@Before
+	public void setUp() throws DataSetException, SQLException, IOException {
+		System.out.println("before");
+		this.backupAllTable();
+	}
+	
+	@Test
+	public void testLoad() throws DatabaseUnitException, SQLException {
+		IDataSet ds = createDateSet("t_user");
+		DatabaseOperation.CLEAN_INSERT.execute(dbunitCon,ds);
+		User u = userDao.load(1);
+		EntitiesHelper.assertUser(u);
+	}
+	
+	@After
+	public void tearDown() throws FileNotFoundException, DatabaseUnitException, SQLException {
+		this.resumeTable();
+	}
+}

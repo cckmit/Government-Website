@@ -1,0 +1,55 @@
+package org.konghao.cms.dao;
+
+import java.util.List;
+
+import org.konghao.basic.dao.BaseDao;
+import org.konghao.basic.model.Pager;
+import org.konghao.cms.model.Attachment;
+
+public class AttachmentDao extends BaseDao<Attachment> implements
+		IAttachmentDao {
+
+
+	@Override
+	public Pager<Attachment> findNoUserAttachment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void clearNoUserAttachment() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void deleteByTopic(int tid) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<Attachment> listByTopic(int tid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Attachment> listIndexPic(int num) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Pager<Attachment> findChannelPic(int cid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Attachment> listAttachByTopic(int tid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

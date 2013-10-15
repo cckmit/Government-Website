@@ -1,0 +1,12 @@
+package org.konghao.cms.dao;
+
+
+import java.util.List;
+
+import org.konghao.basic.dao.IBaseDao;
+import org.konghao.cms.model.Channel;
+
+public interface IChannelDao extends IBaseDao<Channel> {
+	public List<Channel> listByParent(Integer pid);
+	public int getMaxOrderByParent(Integer pid);
+}

@@ -1,0 +1,28 @@
+package org.konghao.basic.util;
+
+import java.io.File;
+
+import org.junit.Test;
+import org.konghao.basic.model.BackupFile;
+
+public class TestBackup {
+	
+	@Test
+	public void testList() {
+		BackupFileUtil bfu = BackupFileUtil.getInstance("E:\\论文和项目\\附中","网站建设");
+		for(BackupFile bf:bfu.listBackups()) {
+			System.out.println(bf);
+		}
+	}
+	
+	@Test
+	public void testBackup() {
+		BackupFileUtil.getInstance("E:\\论文和项目\\附中","网站建设").backup("测试备份");
+	}
+	
+	@Test
+	public void testResume() {
+		BackupFileUtil.getInstance("E:\\论文和项目\\附中","网站建设").resume("1377528600982_测试备份.tar.gz");
+	}
+	
+}

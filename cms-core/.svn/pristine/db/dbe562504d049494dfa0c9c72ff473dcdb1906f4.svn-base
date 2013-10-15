@@ -1,0 +1,75 @@
+package org.konghao.cms.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.konghao.basic.dao.BaseDao;
+import org.konghao.basic.model.Pager;
+import org.konghao.cms.model.Topic;
+import org.springframework.stereotype.Repository;
+
+@Repository("topicDao")
+public class TopicDao extends BaseDao<Topic> implements ITopicDao {
+	
+	private Object[] list2Obj(List<Object> args) {
+		if(args.size()<=0) return null;
+		Object[] objs = new Object[args.size()];
+		int index = 0;
+		for(Object obj:args) {
+			objs[index++] = obj;
+		}
+		return objs;
+	}
+
+	@Override
+	public Pager<Topic> find(Integer cid, String title, Integer status) {
+		return this.find(null,cid,title,status);
+	}
+
+	@Override
+	public Pager<Topic> find(Integer uid, Integer cid, String title,
+			Integer status) {
+		String hql = "select t from Topic t left join t.channel c left join fetch t.user u where 1=1";
+		List<Object> args = new ArrayList<Object>();
+		if(uid!=null&&uid>0) {
+			hql+=" and t.user.id=?";
+			args.add(uid);
+		}
+		if(cid!=null&&cid>0) {
+			hql+=" and c.id=?";
+			args.add(cid);
+		}
+		if(title!=null&&!"".equals(title.trim())) {
+			hql+=" and t.title like ('%"+title+"%')";
+		}
+		if(status!=null) {
+			hql+=" and t.status=?";
+			args.add(status);
+		}
+		Object[] objs = list2Obj(args);
+		return this.find(hql, objs);
+	}
+
+	@Override
+	public Pager<Topic> searchTopicByKeyword(String keyword) {
+		String hql = "select t from Topic t left join fetch t.channel c where t.keyword like '%"+keyword+"%'";
+		return this.find(hql);
+	}
+
+	@Override
+	public Pager<Topic> searchTopic(String con) {
+		String hql = "select t from Topic t left join fetch t.channel c where " +
+				"t.title like '%"+con+"%' or t.summary like '%"+con+"%' and t.content like '%"+con+"%'";
+		return this.find(hql);
+	}
+
+	@Override
+	public Pager<Topic> findRecommendTopic(Integer cid) {
+		String hql = "select t from Topic t left join fetch t.channel c where t.recommend="+1;
+		if(cid!=null&&cid>0) {
+			hql+=" and c.id="+cid;
+		}
+		return this.find(hql);
+	}
+
+}

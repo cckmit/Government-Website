@@ -1,0 +1,214 @@
+var setting = {
+	view: {
+		dblClickExpand: true,
+		showLine: true,
+		selectedMulti: false,
+		nameIsHTML:true,
+		expandSpeed: ($.browser.msie && parseInt($.browser.version)<=6)?"":"fast"
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "pid",
+			rootPId: "-1"
+		}
+	},
+	callback: {
+		beforeClick: beforeClick,
+		onClick: onClick,
+		onDblClick:hideMenu
+	}
+};
+
+function beforeClick(treeId, treeNode) {
+	var check = (treeNode && !treeNode.isParent);
+	if (!check) alert("不能选择导航栏目");
+	return check;
+}
+
+function onClick(e, treeId, treeNode) {
+	var zTree = $.fn.zTree.getZTreeObj("tree"),
+	nodes = zTree.getSelectedNodes(),
+	v = "";
+	nodes.sort(function compare(a,b){return a.id-b.id;});
+	for (var i=0, l=nodes.length; i<l; i++) {
+		v += nodes[i].name + ",";
+	}
+	if (v.length > 0 ) v = v.substring(0, v.length-1);
+	$("#cname").val(v);
+	$("#cid").val(treeNode.id);
+}
+
+function showMenu() {
+	var channelObj = $("#cname");
+	var channelOffset = $("#cname").offset();
+	$("#menuContent").css({left:channelOffset.left + "px", top:channelOffset.top + channelObj.outerHeight() + "px"}).slideDown("fast");
+
+	$("body").bind("mousedown", onBodyDown);
+}
+function hideMenu() {
+	$("#menuContent").fadeOut("fast");
+	$("body").unbind("mousedown", onBodyDown);
+}
+function onBodyDown(event) {
+	if (!(event.target.id == "cname" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+		hideMenu();
+	}
+}
+var contextPath = "";
+$(function(){
+	$.cms_validate.articleValidate();
+	var t = $("#tree");
+	t = $.fn.zTree.init(t, setting,zNodes);
+	t.expandAll(true);
+	$("#cname").click(showMenu);
+	
+	$( "#publishDate" ).datepicker({
+		dateFormat:"yy-mm-dd",//设置日期的格式
+		maxDate:0,//最大日期为1年后（2013-2-2具体日期）
+		changeMonth:true,//可以选择一个月份
+		changeYear:true//可以选择一个年份
+	});
+	
+	CKEDITOR.replace("contents",{
+		fullPage : true
+	});
+	contextPath = $("#contextPath").val();
+	var sessionId = $("#sessionId").val();
+	var allowDescType = "jpg;png;gif;txt;doc;xls;pdf;rar";
+	var allowType = "*.jpg;*.png;*.gif;*.txt;*.doc;*.xls;*.docx;*.xlsx;*.pdf;*.rar;*.swf";
+	$("#attach").uploadify({
+		uploader: contextPath+"/resources/js/file/uploadify.swf",//指定文件上传的进度条的位置
+		script:contextPath+"/admin/article/upload?jsessionId="+$("#sessionId").val(),//指定用那个服务器端程序处理文件操作
+		cancelImg: contextPath+"/resources/js/file/cancel.png",//取消文件上传的图标
+		fileDataName:"attach",//文件上传到服务器的名称(使用file中的name)
+		method:"post",//通过post方式上传
+		queueID:"attachs",//上传队列说存储的位置
+		auto:false,//是否选中之后就上传,false表示选中之后不上传
+		multi:true,//时候支持多文件上传
+		fileDesc:"请选择"+allowDescType,
+		fileExt:allowType,
+		onComplete:fileComplete,//当一个文件上传完成之后执行该方法
+		onAllComplete:bindEvent
+	});
+	$("#uploadFile").click(function(){
+		$("#attach").uploadifyUpload();
+	});
+	
+
+});
+function deleteAttach(){
+	var conf = confirm("该操作不可逆！确定删除该附件吗?");
+	if(conf) {
+		var id = $(this).attr("title");
+		var node = $("#iattach"+id);
+		var tr = $(this).parent("td").parent("tr");
+		var ntr = $(tr).next("tr");
+		attachmentService.deleteById(id,function(data){
+			$(tr).remove();
+			$(ntr).remove();
+		});
+	}
+}
+function setIndexNews() {
+	var id = $(this).val();
+	var ischeck = $(this).attr("checked");
+	if(ischeck) {
+		attachmentService.updateSetIndexNews(id);			
+	} else {
+		attachmentService.updateSetCanncelIndexNews(id);	
+	}
+}
+function setAttach(){
+	var id = $(this).val();
+	var ischeck = $(this).attr("checked");
+	if(ischeck) {
+		attachmentService.updateSetAttach(id);			
+	} else {
+		attachmentService.updateSetCannelAttach(id);	
+	}
+}
+function insertAttach(){
+	var td = $(this).parent("td");
+	var isImg = $(td).attr("isImg");
+	var addNode,address;
+	var contextPath = $("#contextPath").val();
+	address = contextPath+"/resources/upload/"+$(td).attr("url");
+	var filetype = address.substring(address.lastIndexOf(".")+1);
+	alert(filetype);
+	var isSwf = false;
+	if(filetype.toLowerCase()=="swf") {
+		alert("sss");
+		isSwf = true;
+	}
+	if(isImg==1) {
+		addNode = "<span class='iattach' id='iattach"+$(td).attr("aid")+"'><img src='"+address+"'/></span>";
+	} else if(isSwf){
+		addNode = "<span class='iattach' id='iattach"+$(td).attr("aid")+"'>"+generatorSwf(address)+"</span>";
+	} else {
+		addNode = "<span class='iattach' id='iattach"+$(td).attr("aid")+"'><a href="+address+">"+$(td).attr("aname")+"</a></span>";
+	}
+	var oEditor = CKEDITOR.instances.contents;
+	if ( oEditor.mode == 'wysiwyg' )
+	{
+		// http://docs.cksource.com/ckeditor_api/symbols/CKEDITOR.editor.html#insertText
+		oEditor.insertHtml( addNode);
+	}
+	else
+		alert( 'You must be in WYSIWYG mode!' );
+}
+
+function generatorSwf(url) {
+	var h = "<object classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0'>" +
+			"<param name='quality' value='high' /><param name='movie' value='"+url+"' />" +
+					"<embed pluginspage='http://www.macromedia.com/go/getflashplayer' quality='high' src='"+url+"' " +
+							"type='application/x-shockwave-flash'></embed>";
+	return h;
+}
+function bindEvent() {
+	$(".deleteAttach").click(deleteAttach);
+	$("input[name='isIndexNews']").click(setIndexNews);
+	$("input[name='isAttach']").click(setAttach);
+	$(".insertAttach").click(insertAttach);
+}
+function fileComplete(event, ID, fileObj, response, data) {
+	var rel = $.parseJSON(response);
+	if(rel.result==1) {
+		var att = rel.obj;
+		var node = createNode(att);
+		$("#ok_attach tbody").append(node);
+	} else {
+		alert("发生错误:"+rel.message);
+	}
+}
+
+function createNode(obj) {
+	var node = "<tr>";
+	if(obj.isImg==1) {
+		node+="<td><img src='"+contextPath+"/resources/small/"+obj.smallImgName+"'/></td>";
+	} else {
+		node+="<td>普通附件类型</td>";
+	}
+	node+="<td>"+obj.oldName+"</td>";
+	node+="<td>"+obj.size+"</td>";
+	if(obj.isImg==1) {
+		node+="<td><input type='checkbox' value='"+obj.id+"' name='isIndexNews'/></td>";
+		node+="<td><input type='radio' value='"+obj.id+"' name='showAttId'/></td>";
+	} else {
+		node+="<td>普通附件类型</td><td>普通附件类型</td>";
+	}
+	node+="<td><input type='checkbox' value='"+obj.id+"' name='isAttach'/></td>";
+	node+="<td isImg='"+obj.isImg+"' aid='"+obj.id+"' aname='"+obj.oldName+"' url='"+obj.newName+"'><a href='#' title='"+obj.id+"' class='list_op deleteAttach'>删除附件</a>&nbsp;<a href='#' class='list_op insertAttach'>插入到文章</a></td>";
+	node+="<input type='hidden' value='"+obj.id+"' name='atts'/>";
+	node+="</tr>";
+	node+="<tr><td colspan='7' style='background:#ddd;color:#444'>该附件的连接地址是:<span>"+contextPath+"/resources/upload/"+obj.newName+"</span></td></tr>"
+	return node;
+}
+
+function generatorSmallImgName(name) {
+	var str = new String(name);
+	var fn = str.substring(0, str.lastIndexOf("."));
+	var ft = str.substring(str.lastIndexOf(".")+1);
+	return fn+"_small."+ft;
+}

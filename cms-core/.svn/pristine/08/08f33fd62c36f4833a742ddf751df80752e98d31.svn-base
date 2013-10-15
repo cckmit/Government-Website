@@ -1,0 +1,29 @@
+package org.konghao.cms.dao;
+
+import java.util.List;
+
+import org.konghao.basic.dao.IBaseDao;
+import org.konghao.basic.model.Pager;
+import org.konghao.cms.model.Keyword;
+
+public interface IKeywordDao extends IBaseDao<Keyword>{
+	/**
+	 * 根据引用次数获取关键字，获取大于等于num次的关键字
+	 * @return
+	 */
+	public List<Keyword> listChiefKeyword(int num);
+	/**
+	 * 查找没有使用的关键字
+	 * @return
+	 */
+	public Pager<Keyword> findNoUseKeyword();
+	/**
+	 * 清空没有使用的关键字
+	 */
+	public void clearNoUserKeyword();
+	/**
+	 * 查找正在被引用的关键字
+	 * @return
+	 */
+	public Pager<Keyword> findUserKeyword();
+}

@@ -1,0 +1,45 @@
+$(function(){
+	$('#content').xheditor({tools:'full'});
+	var t = $("#mytree").mytree({mine:{listChild:0},
+		callback:{
+			onAsyncSuccess:function(){
+				t.expandAll(true);
+			},
+			beforeClick:beforeChoice,
+			onClick:choice
+		}
+	});
+	$("#cname").click(showMenu);
+	$( "#publishDate" ).datepicker({
+		dateFormat:"yy-mm-dd",//设置日期的格式
+		maxDate:0,//最大日期为1年后（2013-2-2具体日期）
+		changeMonth:true,//可以选择一个月份
+		changeYear:true//可以选择一个年份
+	});
+})
+function choice(event,treeId,treeNode) {
+	$("#cname").val(treeNode.name);
+	$("#cid").val(treeNode.id);
+	hideMenu();
+}
+function beforeChoice(treeId,treeNode) {
+	var check = (treeNode && !treeNode.isParent);
+	if (!check) return check;
+}
+function showMenu() {
+	$("#mytree").width($(this).width()-9);
+	var cObj = $("#cname");
+	var cOffset = $("#cname").offset();
+	$("#menuContent").css({left:cOffset.left + "px", top:cOffset.top + cObj.outerHeight() + "px"}).slideDown("fast");
+
+	$("body").bind("mousedown", onBodyDown);
+}
+function onBodyDown(event) {
+	if (!(event.target.id == "menuBtn" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
+		hideMenu();
+	}
+}
+function hideMenu() {
+	$("#menuContent").fadeOut("fast");
+	$("body").unbind("mousedown", onBodyDown);
+}

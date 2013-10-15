@@ -1,0 +1,97 @@
+$.cms_validate = {
+	loginValidate:function(form){
+		$(form).validate({
+			errorElement: "span",
+			errorClass:"errorContainer",
+			rules:{
+				username:"required",
+				password:"required",
+				validateCode:"required"
+			},
+			messages:{
+				username:"请输入用户名",
+				password:"请输入密码",
+				validateCode:"请输入验证码"
+			}
+		});
+	},
+	userValidate:function(form) {
+		if(!form) form=$("#addForm")
+		$(form).validate({
+			errorElement: "span",
+			errorClass:"errorContainer",
+			rules:{
+				username:"required",
+				password:"required",
+				confirmPwd:{
+					required:true,
+					equalTo:"#password"
+				},
+				email:"email"
+			},
+			messages:{
+				username:"必须输入用户名",
+				password:"密码不能为空",
+				confirmPwd:"两次输入的密码不一致",
+				email:"邮件的格式不正确"
+			}
+		});
+	},
+	linkValidate:function(form) {
+		if(!form) form=$("#addForm");
+		$(form).validate({
+			errorElement: "span",
+			errorClass:"errorContainer",
+			rules:{
+				title:"required",
+				type:"required"
+			},
+			messages:{
+				title:"必须输入标题",
+				type:"类型不能为空"
+			}
+		});
+	},
+	groupValidate:function(form) {
+		if(!form) form=$("#addForm");
+		$(form).validate({
+			errorElement: "span",
+			errorClass:"errorContainer",
+			rules:{
+				name:"required"
+			},
+			messages:{
+				name:"必须输入用户组的名称"
+			}
+		});
+	},
+	channelValidate:function(form) {
+		if(!form) form=$("#addForm");
+		$(form).validate({
+			errorElement: "span",
+			errorClass:"errorContainer",
+			rules:{
+				name:"required"
+			},
+			messages:{
+				name:"必须输入栏目名称"
+			}
+		});
+	},
+	articleValidate:function(form) {
+		if(!form) form=$("#addForm");
+		$(form).validate({
+			errorElement: "span",
+			errorClass:"errorContainer",
+			rules:{
+				title:"required",
+				cname:"required"
+			},
+			messages:{
+				title:"必须输入文章的标题",
+				cname:"必须选择一个栏目"
+			}
+		});
+	}
+	
+};

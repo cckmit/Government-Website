@@ -1,0 +1,17 @@
+var basicSettings = {
+	view: {
+		dblClickExpand: true,
+		showLine: true,
+		selectedMulti: false,
+		nameIsHTML:true,
+		expandSpeed: ($.browser.msie && parseInt($.browser.version)<=6)?"":"fast"
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "pid",
+			rootPId: "-1"
+		}
+	}
+};

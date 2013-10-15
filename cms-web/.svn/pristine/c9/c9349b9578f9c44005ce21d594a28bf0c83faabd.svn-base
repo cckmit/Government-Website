@@ -1,0 +1,30 @@
+package org.konghao.cms.controller;
+
+import org.konghao.cms.auth.AuthClass;
+import org.konghao.cms.auth.AuthMethod;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@AuthClass("login")
+@RequestMapping("/admin/topic")
+public class TopicController {
+	
+	@RequestMapping("/add")
+	@AuthMethod(role="ROLE_PUBLISH")
+	public void add() {
+		
+	}
+	
+	@RequestMapping("/delete")
+	@AuthMethod(role="ROLE_PUBLISH")
+	public void delete() {
+		
+	}
+	
+	@RequestMapping("/audit")
+	@AuthMethod(role="ROLE_AUDIT")
+	public void audit() {
+		
+	}
+}
